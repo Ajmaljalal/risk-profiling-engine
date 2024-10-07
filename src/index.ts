@@ -3,7 +3,6 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import config from './configs/base';
-import { sendEmailWithTemplateService } from './services/send-email';
 
 const app = express();
 
@@ -28,31 +27,11 @@ app.use((req: any, res: any, next: any) => {
 });
 
 app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Email server is running' });
+  res.status(200).json({ message: 'Risk profiling server is running' });
 })
 
-app.post('/invite', async (req, res) => {
-  const data = req.body;
-  try {
-    await sendEmailWithTemplateService({
-      to_email: data.email,
-      type: 'invite-user',
-      data: {
-        name: data.first_name,
-        employer: data.company_name,
-        companyId: data.company_id,
-        subject: "Setup your Plannly Health Account",
-        setup_user_link: `${process.env.PLANNLY_CLIENT}/auth/activate-account?email=${data.email}`
-      }
-    });
-    res.status(200).json({ error: false });
-
-  } catch (error: any) {
-    console.log('ERROR', error.message)
-    res.status(500).json({ error: true, message: error.message, email: data.email });
-  }
-});
-
 app.listen(config.server.port, () => {
-  console.info(`Email server listening on ${config.server.hostname}:${config.server.port}`)
+  console.info(`Risk profiling server listening on ${config.server.hostname}:${config.server.port}`)
 });
+
+
